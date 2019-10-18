@@ -137,16 +137,14 @@
   {:extra-deps {speculative {:mvn/version "RELEASE"}}}
 
   :nrebl
-  {:extra-deps {rickmoynihan/nrebl.middleware {:git/url "https://github.com/RickMoynihan/nrebl.middleware"
-                                               :sha "cba6d1e33ed635c9ddc0313f2514e5f7b561344d"}}
-   :main-opts ["-e" "((requiring-resolve,'cognitect.rebl/ui))"
+  {:extra-deps {rickmoynihan/nrebl.middleware {:git/url "https://github.com/imrekoszo/nrebl.middleware"
+                                               :sha "d5b0d6020e6ec98197208d612722e1af42169e00"}}}
+
+  :nrebl-repl
+  {:main-opts ["-e" "((requiring-resolve,'cognitect.rebl/ui))"
                "-m" "nrepl.cmdline"
                "--interactive"
                "--color"
-               "--middleware" "[nrebl.middleware/wrap-nrebl]"]}
-
-  :cursive-nrebl
-  {:main-opts ["-m" "nrepl.cmdline"
                "--middleware" "[nrebl.middleware/wrap-nrebl]"]}
 
   :tubular
