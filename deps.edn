@@ -136,12 +136,16 @@
                 org.openjfx/javafx-web      {:mvn/version "11.0.1"}}
    :main-opts ["-m" "cognitect.rebl"]}
 
+  ;; placeholder for now
+  :dev
+  {}
+
   :speculative
   {:extra-deps {speculative {:mvn/version "RELEASE"}}}
 
   :nrebl
   {:extra-deps {rickmoynihan/nrebl.middleware {:git/url "https://github.com/imrekoszo/nrebl.middleware"
-                                               :sha "d5b0d6020e6ec98197208d612722e1af42169e00"}}}
+                                               :sha "46bf1e588466e963764aca190119da2e904c06e0"}}}
 
   :nrebl-repl
   {:main-opts ["-e" "((requiring-resolve,'cognitect.rebl/ui))"
