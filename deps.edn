@@ -164,6 +164,10 @@
   :decompiler
   {:extra-deps {com.clojure-goes-fast/clj-java-decompiler {:mvn/version "RELEASE"}}}
 
+  :graph
+  {:deps      {org.clojure/tools.deps.graph {:mvn/version "RELEASE"}}
+   :main-opts ["-m" "clojure.tools.deps.graph"]}
+
   :deps ; to get access to clojure.tools.deps.alpha.repl/add-lib
   ;; - now you can add new deps to a running REPL:
   ;; (require '[clojure.tools.deps.alpha.repl :refer [add-lib]])
