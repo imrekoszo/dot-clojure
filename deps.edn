@@ -161,6 +161,9 @@
   {:extra-deps {lambdaisland/kaocha           {:mvn/version "RELEASE"}
                 lambdaisland/kaocha-cloverage {:mvn/version "RELEASE"}}}
 
+  :decompiler
+  {:extra-deps {com.clojure-goes-fast/clj-java-decompiler {:mvn/version "RELEASE"}}}
+
   :deps ; to get access to clojure.tools.deps.alpha.repl/add-lib
   ;; - now you can add new deps to a running REPL:
   ;; (require '[clojure.tools.deps.alpha.repl :refer [add-lib]])
