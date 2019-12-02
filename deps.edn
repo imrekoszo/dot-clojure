@@ -147,13 +147,6 @@
   {:extra-deps {rickmoynihan/nrebl.middleware {:git/url "https://github.com/imrekoszo/nrebl.middleware"
                                                :sha "46bf1e588466e963764aca190119da2e904c06e0"}}}
 
-  :nrebl-repl
-  {:main-opts ["-e" "((requiring-resolve,'cognitect.rebl/ui))"
-               "-m" "nrepl.cmdline"
-               "--interactive"
-               "--color"
-               "--middleware" "[nrebl.middleware/wrap-nrebl]"]}
-
   :tubular
   {:extra-deps {tubular {:mvn/version "1.3.0"}}}
 
