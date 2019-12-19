@@ -167,6 +167,10 @@
     {:git/url "https://github.com/clojure/tools.trace"
      :sha     "e6bc29e4c1d9d69d6d9d7cce62ee8da02662d284"}}}
 
+  :hashp
+  {:extra-deps
+   {hashp {:mvn/version "0.1.0"}}}
+
   :deps ; to get access to clojure.tools.deps.alpha.repl/add-lib
   ;; - now you can add new deps to a running REPL:
   ;; (require '[clojure.tools.deps.alpha.repl :refer [add-lib]])

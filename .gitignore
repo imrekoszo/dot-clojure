@@ -1,2 +1,3 @@
 .cpcache
 clj.cp
+secret-deps.edn
