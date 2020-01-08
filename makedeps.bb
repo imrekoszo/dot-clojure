@@ -22,7 +22,7 @@
 (def all-deps (merge-with merge deps secret))
 
 (def cursive-dev-aliases
-  (juxt :bench :decompiler :dev :hashp :kaocha :measure :nrebl :rebl-8
+  (juxt :bench :decompile :dev :hashp :kaocha :measure :nrebl :rebl-8
         :reflect :speculative :trace))
 
 (-> all-deps
