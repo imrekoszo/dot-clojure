@@ -21,24 +21,22 @@
 
 (def all-deps (merge-with merge deps secret))
 
-(def cursive-dev-aliases
-  (juxt :bench :decompile :dev :hashp :kaocha :measure :nrebl :rebl-8
-        :reflect :speculative :trace))
+(def alias-recipes
+  (let [lite #{:dev :hashp :nrebl :rebl-8}]
+    {:cursive-lite (-> lite sort)
+     :cursive-full (-> lite
+                       (set/union
+                        #{:bench :decompile :kaocha :measure
+                          :reflect :speculative :trace})
+                       (sort))}))
 
-(def cursive-lite-aliases
-  (-> #{:dev :hashp :nrebl :rebl-8}
-      (sort)))
+(defn recipe->alias [recipe]
+  (-> all-deps
+      (:aliases)
+      ((apply juxt recipe))
+      (->> (reduce (fn [acc m] (merge-with merge acc m))))
+      (select-keys [:extra-deps])))
 
-(def cursive-full-aliases
-  (-> #{:bench :decompile :kaocha :measure
-        :reflect :speculative :trace}
-      (set/union cursive-lite-aliases)
-      (sort)))
-
-(->> all-deps
-     (:aliases)
-     ((apply juxt (map (partial apply juxt) [cursive-lite-aliases cursive-full-aliases])))
-     (map (partial reduce (fn [acc m] (merge-with merge acc m))))
-     (map #(select-keys % [:extra-deps]))
-     (zipmap [:cursive-lite :cursive-full])
-     (reduce (fn [deps alias] (update deps :aliases merge alias)) all-deps))
+(update all-deps :aliases
+        #(->> alias-recipes
+              (into % (map (juxt key (comp recipe->alias val))))))
