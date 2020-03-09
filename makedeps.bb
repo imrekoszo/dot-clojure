@@ -22,12 +22,11 @@
 (def all-deps (merge-with merge deps secret))
 
 (def alias-recipes
-  (let [lite #{:dev :hashp :nrebl :rebl-8}]
+  (let [lite #{:bench :dev :hashp :nrebl :rebl-8 :trace}]
     {:cursive-lite (-> lite sort)
      :cursive-full (-> lite
                        (set/union
-                        #{:bench :decompile :kaocha :measure
-                          :reflect :speculative :trace})
+                        #{:decompile :kaocha :measure :reflect :speculative})
                        (sort))}))
 
 (defn recipe->alias [recipe]
