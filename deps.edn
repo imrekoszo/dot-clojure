@@ -65,6 +65,10 @@
               :main-opts ["-e" "(require,'[clojure.tools.nrepl.server,:refer,[start-server]]),(start-server,:port,60606)"]}
   ;; - start a Socket REPL on port 50505:
   :socket {:jvm-opts ["-Dclojure.server.repl={:port,50505,:accept,clojure.core.server/repl}"]}
+  ;; - start a Socket REPL on an available port, and display that port:
+  ;; - specify -r as well if you want a repl
+  :socket-zero {:jvm-opts ["-Dclojure.server.repl={:port,0,:accept,clojure.core.server/repl}"]
+                :main-opts ["-e" "(.getLocalPort,(get-in,@#'clojure.core.server/servers,[\"repl\",:socket]))"]}
   ;; - start a Socket pREPL on port 40404:
   :prepl {:jvm-opts ["-Dclojure.server.repl={:port,40404,:accept,clojure.core.server/io-prepl}"]}
   ;; - see https://atom.io/packages/proto-repl
@@ -216,7 +220,7 @@
   ;; - see https://github.com/mogenslund/liquid
   :liquid
   {:extra-deps {mogenslund/liquid {:mvn/version "RELEASE"}}
-   :main-opts ["-m" "dk.salza.liq.core"]}
+   :main-opts ["-m" "liq.core"]}
 
   ;; project creation from templates:
   ;; - see https://github.com/seancorfield/clj-new
@@ -254,6 +258,11 @@
             :main-opts ["-m" "deps-deploy.deps-deploy" "install"]}
   :deploy {:extra-deps {deps-deploy {:mvn/version "RELEASE"}}
            :main-opts ["-m" "deps-deploy.deps-deploy" "deploy"]}
+
+  ;; closh
+  :closh {:extra-deps {closh {:git/url "https://github.com/dundalek/closh.git"
+                              :tag "v0.5.0" :sha "6a7c0aa293616e2d28f7f735e915a301e44d2121"}}
+          :main-opts ["-m" "closh.zero.frontend.rebel"]}
 
   ;; - inspired by Ruby's -pne command line option which lets you process lines of stdin bound to $_
   ;; - usage: cat file-of-numbers.txt | clj -Mpne -e '($ (-> $_ Long/parseLong inc))'
