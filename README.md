@@ -2,15 +2,17 @@
 
 This is my personal `.config/clojure/deps.edn` (or `.clojure/deps.edn`) file providing useful `clj` aliases drawn from a variety of projects. It is published to GitHub so I can keep all my computers sync'd up -- and to provide a range of examples that folks new to the Clojure CLI might find helpful.
 
-**The default Clojure version in use here is 1.13.0-alpha7!**
+**The default Clojure version in use here is 1.13.0-alpha8!**
 
 **I highly recommend ensuring you have [the latest Clojure CLI](https://clojure.org/releases/tools) installed!**
 
 > The latest Clojure CLI was 1.12.6.1673 (September 7th, 2026) when I last updated this file.
 
+Since the release of the [Clojure CLI REPL](https://github.com/clojure/clojure-cli.repl), my `.cljconf/org.clojure` folder is here, containing my personal configuration based on the [examples provided](https://github.com/clojure/clojure-cli.repl/tree/main/examples/.cljconf/org.clojure). This includes logic to add Portal and `rephrase` middleware if they are on the classpath. _This has replaced my former custom REPL startup code._
+
 In addition, my `.config/clojure/tools/` (`.clojure/tools/`) folder is also here, containing the tools that I've installed globally, via the Clojure CLI -- see [Tool installation and invocation](https://clojure.org/reference/clojure_cli#tool_install) in the Clojure CLI Reference. As I add global tools, I am removing them as aliases.
 
-The main alias I use here is `:dev/repl` which starts various combinations of REPL tooling. See [**The `:dev/repl` Alias**](#the-devrepl-alias) below for more details.
+The main alias I use here is `:repl` which starts various combinations of REPL tooling via the Clojure CLI REPL.
 
 _Since it is my personal file, it may make assumptions about my own environment. I make no effort at backward-compatibility and may add, delete, or change aliases as they benefit me personally. Caveat Programmer!_
 
@@ -18,24 +20,15 @@ _Since it is my personal file, it may make assumptions about my own environment.
 
 With that caveat out of the way, here is some basic documentation about my tools and aliases (there are additional examples in the comments in the `deps.edn` file itself). _Note: I have recently cleaned this file up and removed a lot of aliases I no longer use!_
 
-TL;DR: add the following dependency and then start a REPL with `clj -M:dev/repl` (optionally with other aliases before it to bring in more tooling):
+I start a REPL using `clojure -M:repl` with several additional aliases to bring in various tooling, such as Portal, `rephrase`, and CIDER nREPL middleware.
 
-```clojure
-:aliases
-{:dev/repl
- {:extra-deps
-  {io.github.seancorfield/dot-clojure
-   {:git/tag "v1.4.2"
-    :git/sha "2ac85f5"}}
-  :main-opts ["-m" "org.corfield.dev.repl"]}}
-```
 There is also a `bin/repl` bash script that runs
-`clojure "$@" -M:1.13:allow-attach-self:portal:test:cider-nrepl:rebel:dev/repl`
-to start an nREPL server with CIDER middleware, and then a Rebel Readline
-interactive REPL, as a client to that nREPL server, with Portal available (and `clojure.tools.logging`, if
+`clojure "$@" -M:1.13:allow-attach-self:portal:test:cider-nrepl:rephrase:repl`
+to start an nREPL server with CIDER middleware, and then a client to that nREPL 
+server, with Portal available (and `clojure.tools.logging`, if
 present, patched to `tap>` all log messages for Portal, also `logging4j2` -- my log4j2 wrapper).
 
-The `:allow-attach-self` alias is a recent addition, which sets the JVM property
+The `:allow-attach-self` alias sets the JVM property
 `-Djdk.attach.allowAttachSelf` for JDK 21+ so that
 nREPL can stop evaluation threads.
 
@@ -69,13 +62,12 @@ More tools will be added to this section over time (as more tools add `:tools/us
 ## Basic Aliases
 
 Deploy jar files (if you don't have a `build.clj` file):
-* `:deploy` -- pulls in and runs a recent stable release of Erik Assum's [deps-deploy](https://github.com/slipset/deps-deploy) and deploys the specified JAR file to Clojars, based on your `pom.xml` and the `CLOJARS_USERNAME` and `CLOJARS_PASSWORD` environment variables; `clojure -X:deploy :artifact '"MyProject.jar"'`
+* `:deploy` -- pulls in and runs a recent stable release of Borkdude's [deps-deploy](https://github.com/babashka/deps-deploy) and deploys the specified JAR file to Clojars, based on your `pom.xml` and the `CLOJARS_USERNAME` and `CLOJARS_PASSWORD` environment variables; `clojure -X:deploy :artifact '"MyProject.jar"'`
 
 There are aliases to pull in various useful testing and debugging tools:
 * `:test` -- adds both `test` and `src/test/clojure` to your classpath and pulls in the latest stable version of `test.check`
 * `:lazy` -- adds a recent stable release of [NoahTheDuke's Lazytest](https://github.com/NoahTheDuke/lazytest) for more expressive and powerful testing; can be used as `clojure -M:test:lazy` to run just Lazytest tests, or `clojure -X:test:lazy:runner` to run both Lazytest and `clojure.test` tests (via my fork of Cognitect's `test-runner` project)
 * `:runner` -- pulls in my fork of [Cognitect Labs' `test-runner`](https://github.com/cognitect-labs/test-runner) project and runs any tests it can find
-* `:eastwood` -- pulls and runs in a recent stable release of [Eastwood](https://github.com/jonase/eastwood) on your `src` and `test` folders; use with `:test` above
 * `:splint` -- pulls in and runs a recent stable release of [Splint](https://github.com/NoahTheDuke/splint) on your project or specific files
 * `:check` -- pulls in [Athos' Check](https://github.com/athos/clj-check) project to compile all your namespaces to check for syntax errors and reflection warnings like `lein check`
 * `:bench` -- pulls in a recent stable release of [Criterium](https://github.com/hugoduncan/criterium/) for benchmarking your code
@@ -84,37 +76,17 @@ There are aliases to pull in various useful testing and debugging tools:
 * `:no-main` -- adds an empty `:main-opts` so that you can run `clojure -M:test:no-main ...` in projects that combine the test deps with the test runner (instead of having them separate as this `deps.edn` has them). Because `:main-opts` is "last one wins", this allows you to essentially override (or remove) any `:main-opts` from aliases, so you can manually specify your own main options on the command-line.
 
 There are aliases to pull in and start various REPL-related tools:
-* `:dev/repl` -- depending on what is on your classpath, start Rebel Readline, with a Socket REPL (if requested -- note that "port 0" will dynamically select an available port and print it out), but `SOCKET_REPL_PORT` env var and `socket-repl-port` property override, saves port to `.socket-repl-port` file for next time;
-  * usage:
-    * `clj -M:dev/repl` -- basic REPL or
-    * `clj -M:portal:dev/repl` -- ...with Portal or
-    * `clojure -M:rebel:dev/repl` -- Rebel Readline REPL or
-    * `clojure -M:rebel:portal:dev/repl` -- ...with Portal or
-    * `clojure -M:nrepl:dev/repl` -- basic nREPL server or
-    * `clojure -M:nrepl:portal:dev/repl` -- ...with Portal (& middleware) or
-    * `clojure -M:cider-nrepl:dev/repl` -- CIDER nREPL server or
-    * `clojure -M:cider-nrepl:portal:dev/repl` -- ...with Portal (& middleware) or
-    * `clojure -M:rebel:nrepl:dev/repl` -- Rebel Readline nREPL client + basic nREPL server or
-    * `clojure -M:rebel:nrepl:portal:dev/repl` -- ...with Portal (& middleware) or
-    * `clojure -M:rebel:cider-nrepl:dev/repl` -- Rebel Readline nREPL client + CIDER nREPL server or
-    * `clojure -M:rebel:cider-nrepl:portal:dev/repl` -- ...with Portal (& middleware) or
-  * Also works with Figwheel Main (now that I've started doing ClojureScript!):
-    * `clojure -M:portal:fig:build:dev/repl` or
-* `:classes` -- adds the `classes` folder to your classpath to pick up compiled code (e.g., see https://clojure.org/guides/dev_startup_time)
-* `:socket` -- starts a Socket REPL on port 50505; can be combined with other aliases since this is just a JVM option
-* `:rebel` -- starts a [Rebel Readline](https://github.com/bhauman/rebel-readline) REPL; note that this also loads the Rebel Readline nREPL client library
-* `:nrepl` -- starts a (headless) [nREPL server](https://nrepl.org/) on a random available port; `clojure -M:nrepl`
-* `:cider-nrepl` -- starts a (headless) CIDER-enhanced [nREPL server](https://nrepl.org/) on a random available port; `clojure -M:cider-nrepl`
-
-* `:datomic/dev.datafy` -- adds `datafy`/`nav` support for Datomic objects via [datomic/dev.datafy](https://github.com/Datomic/dev.datafy)
-* `:dbxray` -- adds [donut-party/dbxray](https://github.com/donut-party/dbxray) to help visualize your database structure
-* `:jedi-time` -- adds `datafy`/`nav` support for Java Time objects via [jedi-time](https://github.com/jimpil/jedi-time)
+* `:repl`, `:serve`, `:attach` -- aliases for the [Clojure CLI REPL](https://github.com/clojure/clojure-cli.repl) server and client. **`:repl` is my primary way to start an interactive REPL session, with additional aliases for adding middleware etc.**
 * `:portal` -- pulls in a recent stable release of the [Portal](https://github.com/djblue/portal) data visualization tool -- see the Portal web site for usage options
-* `:reflect` -- adds Stuart Halloway's reflector utility (best used with Portal)
-* `:rephrase` -- adds the latest stable release of [rephrase](https://github.com/seancorfield/rephrase), which provides nREPL middleware to rephrase error messages into more beginner-friendly versions. This is automatically added by the `:dev/repl` alias.
+* `:rephrase` -- adds the latest stable release of [rephrase](https://github.com/seancorfield/rephrase), which provides nREPL middleware to rephrase error messages into more beginner-friendly versions.
+
+* `:cider-nrepl` -- starts a (headless) CIDER-enhanced [nREPL server](https://nrepl.org/) on a random available port; `clojure -M:cider-nrepl`; when used with `:repl` or `:serve` above, will add the CIDER middleware.
+
+* `:nrepl` -- starts a (headless) [nREPL server](https://nrepl.org/) on a random available port; `clojure -M:nrepl`
+* `:classes` -- adds the `classes` folder to your classpath to pick up compiled code (e.g., see https://clojure.org/guides/dev_startup_time)
 
 There are aliases to pull in specific versions of Clojure:
-* `:1.13` -- Clojure 1.13.0-alpha7 -- see [changes to Clojure in the 1.13 Alpha releases](https://clojure.org/releases/devchangelog#_release_1_13_x)
+* `:1.13` -- Clojure 1.13.0-alpha8 -- see [changes to Clojure in the 1.13 Alpha releases](https://clojure.org/releases/devchangelog#_release_1_13_x)
 * `:1.12` -- Clojure 1.12.6 -- see [changes to Clojure in version 1.12.6](https://github.com/clojure/clojure/blob/master/changes.md)
   * `:1.12.0` -- Clojure 1.12.0
   * `:1.12.1` -- Clojure 1.12.1
@@ -146,40 +118,14 @@ To work with the Polylith command-line tool:
 
 > Note: the _EXPERIMENTAL_ `:add-libs` alias has been removed -- use the [`clojure.repl.deps`](https://clojure.github.io/clojure/branch-master/clojure.repl-api.html#clojure.repl.deps) in Clojure 1.12.0 or later instead!
 
-## The `:dev/repl` Alias
+## My Clojure CLI REPL Setup
 
-The `:dev/repl` alias calls `org.corfield.dev.repl/-main` in the [`repl.clj` file](https://github.com/seancorfield/dot-clojure/blob/develop/src/org/corfield/dev/repl.clj) from this repo. That does a number of things (see the `-main` docstring for more details):
+The updated `hooks.clj` file installs an `uptime` function in the `user` namespace, which allows you to easily see how long your REPL has been running, in a human-readable format.
 
-* Optionally, starts a Socket REPL server (with the port selected via an environment variable, a JVM property, or a dot-file created on a previous run).
+The updated `middleware.clj` file conditionally provides middleware for Portal (this will not be needed with the next version of Portal that will support `{:all-evals true}` config in nREPL).
+
 * If both Portal and `org.clojure/tools.logging` are on the classpath, it patches `tools.logging` to also `tap>` every log message in a format that Portal understands and can display (usually with the ability to go to the file/line listed in the log entry).
 * If both Portal and `com.github.seancorfield/logging4j2` are on the classpath, it patches `logging4j2` to also `tap>` every log message in a format that Portal understands and can display (usually with the ability to go to the file/line listed in the log entry).
-* If Portal 0.33.0 or later is on the classpath, use the Portal middleware with nREPL (if CIDER or nREPL are on the classpath). If using Portal 0.40.0 or later, this also adds the [Portal Notebook middleware](https://cljdoc.org/d/djblue/portal/0.40.0/doc/editors/vs-code/clojure-notebooks#portalnreplwrap-notebook).
-* Starts [Figwheel Main](https://github.com/bhauman/figwheel-main), if present on the classpath, else
-* Starts [Rebel Readline](https://github.com/bhauman/rebel-readline), if present on the classpath, else
-* Starts a CIDER-enhanced [nREPL Server](https://nrepl.org/), if `cider-nrepl` is present on the classpath, else
-* Starts an [nREPL Server](https://nrepl.org/), if present on the classpath.
-
-As of v1.1.0, can start a Rebel Readline REPL and an nREPL Server together.
-
-As of v1.4.2, includes the `rephrase` nREPL middleware to rephrase error messages into more beginner-friendly versions.
-
-_Note 1: since the `repl.clj` code uses `requiring-resolve`, it requires at least Clojure 1.10.0!_
-
-_Note 2: if the Portal middleware is added to nREPL/CIDER, all evaluated results will be `tap>`'d (if the Portal UI is open and listening); my [VS Code/Calva setup](https://github.com/seancorfield/vscode-calva-setup) has additional configuration for working with Portal when the middleware is enabled!_
-
-_Note 3: as of v1.1.3, adds `user/uptime` so you can easily see how long your REPL has been running, in a human-readable format._
-
-## Use with Figwheel
-
-If you are doing ClojureScript development with Figwheel (`figwheel-main`) then you can do something like:
-
-```
-clojure -M:portal:fig:build:dev/repl
-```
-
-You'll get the regular Figwheel build REPL (for ClojureScript, which uses Rebel Readline) and a browser open on your application, plus a Socket REPL on an available port (or whatever your env says, for Clojure evaluation).
-
-Connect to the Socket REPL, write your code as `.cljc` files, and you'll have the full power of your editor, Portal, and Figwheel! What you evaluate in your editor will be treated as Clojure code (and can be `tap>`'d into Portal, for example). What you evaluate at the REPL itself will be treated as ClojureScript code (and will affect your application instead).
 
 # License
 

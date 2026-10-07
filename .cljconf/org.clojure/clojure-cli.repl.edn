@@ -1,0 +1,31 @@
+{:auto-require [[clojure.repl.deps :refer [add-lib]]]
+ :bracket-pairs true
+ :doc-at-cursor "M-d"
+ :eval-form-at-cursor "M-e"
+ :history :project
+ :inspect "M-i"
+ :keybindings dev.keybindings/install
+ :middleware [dev.heap/middleware
+              dev.timing/middleware
+              ^:optional cider.nrepl/cider-middleware
+              ^:optional org.corfield.rephrase.nrepl/middleware
+              ;; add the following setting to ~/.config/nrepl/nrepl.edn
+              ;; {:portal.nrepl/wrap-portal {:all-evals true}}
+              ;; that will tap> all REPL evaluations
+              ^:optional portal.nrepl/middleware]
+ :paredit/barf-forward "M-,"
+ :paredit/join "M-j"
+ :paredit/kill "M-k"
+ :paredit/move-to-prev "M-b"
+ :paredit/raise "M-r"
+ :paredit/slurp-forward "M-."
+ :paredit/slurp-forward-fully "M-/"
+ :paredit/splice "M-h"
+ :paredit/split "M-l"
+ :paredit/wrap-list "M-p"
+ :paredit/wrap-map "M-c"
+ :paredit/wrap-vector "M-s"
+ ;; note: portal middleware overrides the print hook:
+ :print-hook dev.hooks/pprint-values
+ :prompt dev.full-width-prompt/prompt
+ :warn-on-reflection true}
